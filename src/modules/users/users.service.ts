@@ -63,6 +63,31 @@ export class UsersService {
     return !!user;
   }
 
+  async usernameAlreadyExists(username: string): Promise<boolean> {
+    const user = await this.prisma.users.findFirst({
+      where: {
+        username: username,
+      },
+    });
+    return !!user;
+  }
+
+  async usernameAlreadyExistsExceptCurrentUsername(
+    username: string,
+    id: number,
+  ): Promise<boolean> {
+    const user = await this.prisma.users.findFirst({
+      where: {
+        username: username,
+        id_user: {
+          not: id, // Exclure l'utilisateur actuel
+        },
+      },
+    });
+
+    return user ? true : false; // Retourne true si un autre utilisateur existe avec le même username
+  }
+
   async UpdatePassword(id: number, password: string): Promise<Users> {
     const hashedPassword = await bcrypt.hash(password, SaltOrRounds);
     return this.prisma.users.update({

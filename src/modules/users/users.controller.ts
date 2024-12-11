@@ -39,16 +39,24 @@ export class UsersController {
           },
           HttpStatus.BAD_REQUEST,
         );
-      } else {
-        if (UsersService.passwordIsValid(user.password) === false) {
-          throw new HttpException(
-            {
-              status: HttpStatus.BAD_REQUEST,
-              error: ERROR_MESSAGE_PASSWORD_INVALIDE,
-            },
-            HttpStatus.BAD_REQUEST,
-          );
-        }
+      }
+      if (UsersService.passwordIsValid(user.password) === false) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: ERROR_MESSAGE_PASSWORD_INVALIDE,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (await this.usersService.usernameAlreadyExists(user.username)) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Username already exists',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       return await this.usersService.createUser({ data: user });
@@ -115,6 +123,20 @@ export class UsersController {
           {
             status: HttpStatus.BAD_REQUEST,
             error: 'Invalid data',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (
+        await this.usersService.usernameAlreadyExistsExceptCurrentUsername(
+          user.username,
+          Number(id),
+        )
+      ) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Username already exists',
           },
           HttpStatus.BAD_REQUEST,
         );
