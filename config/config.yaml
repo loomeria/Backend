@@ -1,0 +1,12 @@
+http:
+  host: 'localhost'
+  port: 8080
+
+db:
+  postgres:
+    url: '172.18.0.3'
+    port: 5432
+    database: 'loomeria'
+
+  sqlite:
+    database: 'sqlite.db'

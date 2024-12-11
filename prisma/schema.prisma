@@ -1,0 +1,281 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Baskets {
+  id_basket Int @id
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  products BasketsHasProduct[]
+
+  Customers Customers[]
+}
+
+model Permissions {
+  id_permission Int @id
+  name String @unique @db.VarChar(50)
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  users Users[]
+}
+
+model Collections {
+  id_collection Int @id
+  name String @db.VarChar(50)
+  description String? @db.VarChar(50)
+  products Products[]
+}
+
+model Discounts {
+  id_discount Int @id
+  name String @db.VarChar(50)
+  description String? @db.VarChar(50)
+  active Boolean
+  percent String @db.VarChar(50)
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime?
+  products Products[]
+}
+
+model Status {
+  id_state Int @id
+  name String? @db.VarChar(50)
+  description String? @db.VarChar(50)
+  ordersHasStatus OrdersHasStatus[]
+}
+
+model Categories {
+  id_categories String @id @db.VarChar(50)
+  internal_id Decimal @db.Decimal(2, 1)
+  name String @db.VarChar(50)
+  products Products[]
+  preferencies Preferencies[]
+}
+
+model Users {
+  id_user Int @id
+  civility String @db.VarChar(50)
+  first_name String @db.VarChar(50)
+  last_name String @db.VarChar(50)
+  username String @db.VarChar(50)
+  mail String @db.VarChar(50)
+  verify_mail Boolean
+  password String @db.VarChar(500)
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  last_login DateTime @default(now())
+  id_permission Int
+  permission Permissions @relation(fields: [id_permission], references: [id_permission])
+  customers Customers[]
+  sellers Sellers[]
+  address Address[]
+  chats Chats[]
+  histories Histories[]
+}
+
+model Preferencies {
+  id_preference String @id @db.VarChar(50)
+  last_update DateTime?
+  id_categories String @db.VarChar(50)
+  categories Categories @relation(fields: [id_categories], references: [id_categories])
+  customers Customers[]
+}
+
+model Customers {
+  id_user Int @id
+  id_preference String @db.VarChar(50)
+  id_basket Int
+  user Users @relation(fields: [id_user], references: [id_user])
+  preference Preferencies @relation(fields: [id_preference], references: [id_preference])
+  basket Baskets @relation(fields: [id_basket], references: [id_basket])
+  orders Orders[]
+  wishlists Wishlists[]
+  chats Chats[]
+  histories Histories[]
+}
+
+model Sellers {
+  id_seller Int @id
+  siret String @db.VarChar(14)
+  iban String? @db.VarChar(34)
+  id_user Int @unique
+  user Users @relation(fields: [id_user], references: [id_user])
+  shops Shops[]
+  chats Chats[]
+}
+
+model Address {
+  id_address Int @id
+  address String @db.VarChar(50)
+  address2 String? @db.VarChar(50)
+  city String @db.VarChar(50)
+  zipcode Int
+  country String? @db.VarChar(50)
+  phone Decimal @db.Decimal(11, 0)
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  id_user Int
+  user Users @relation(fields: [id_user], references: [id_user])
+}
+
+model Orders {
+  id_order Int @id
+  created_at DateTime @default(now())
+  shipping Json
+  provider String @db.VarChar(50)
+  id_user Int
+  user Customers @relation(fields: [id_user], references: [id_user])
+  orderHasProducts OrdersHasProducts[]
+  orderHasStatus OrdersHasStatus[]
+}
+
+model Shops {
+  id_shop String @id @db.VarChar(50)
+  name String @db.VarChar(50)
+  description String @db.VarChar(1000)
+  address String? @db.VarChar(100)
+  id_seller Int
+  seller Sellers @relation(fields: [id_seller], references: [id_seller])
+  products Products[]
+}
+
+model Wishlists {
+  id_wishlist String @id @db.VarChar(50)
+  name Int
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  id_user Int
+  user Customers @relation(fields: [id_user], references: [id_user])
+  wishlistHasProducts WhishlistsHasProducts[]
+}
+
+model Chats {
+  id_chat String @id @db.VarChar(100)
+  message String @db.VarChar(50)
+  id_user Int
+  id_seller Int
+  user Customers @relation(fields: [id_user], references: [id_user])
+  seller Sellers @relation(fields: [id_seller], references: [id_seller])
+  messages Messages[]
+
+  Users Users[]
+}
+
+model Products {
+  id_product Int @id
+  title String @db.VarChar(50)
+  description String? @db.VarChar(1000)
+  price Decimal @db.Decimal(6, 2)
+  shipping Decimal @db.Decimal(4, 2)
+  quantity Int
+  created_at DateTime @default(now())
+  updated_at DateTime?
+  deleted_at DateTime?
+  id_categories String @db.VarChar(50)
+  id_discount Int?
+  id_collection Int
+  id_shop String @db.VarChar(50)
+  categories Categories @relation(fields: [id_categories], references: [id_categories])
+  discount Discounts? @relation(fields: [id_discount], references: [id_discount])
+  collection Collections @relation(fields: [id_collection], references: [id_collection])
+  shop Shops @relation(fields: [id_shop], references: [id_shop])
+  pictures Pictures[]
+  reviews Reviews[]
+  ordersHasProducts OrdersHasProducts[]
+
+  BasketsHasProduct BasketsHasProduct[]
+
+  WhishlistsHasProducts WhishlistsHasProducts[]
+}
+
+model Histories {
+  id_history String @id @db.VarChar(50)
+  product_id Int
+  created_at DateTime @default(now())
+  is_read DateTime
+  id_user Int
+  user Customers @relation(fields: [id_user], references: [id_user])
+
+  Users Users[]
+}
+
+model Pictures {
+  id_picture String @id @db.VarChar(50)
+  url String? @db.VarChar(100)
+  id_product Int
+  product Products @relation(fields: [id_product], references: [id_product])
+}
+
+model Reviews {
+  id_review Int @id
+  stars Decimal @db.Decimal(1, 0)
+  quote String? @db.VarChar(50)
+  id_product Int
+  product Products @relation(fields: [id_product], references: [id_product])
+}
+
+model Messages {
+  id_message Int @id
+  is_seller Boolean
+  is_read DateTime?
+  message String @db.VarChar(50)
+  id_chat String @db.VarChar(100)
+  chat Chats @relation(fields: [id_chat], references: [id_chat])
+  attachments Attachments[]
+}
+
+model Attachments {
+  id_attachment Int @id
+  url String @db.VarChar(100)
+  id_message Int
+  message Messages @relation(fields: [id_message], references: [id_message])
+}
+
+model OrdersHasProducts {
+  id_order Int
+  id_product Int
+  order Orders @relation(fields: [id_order], references: [id_order])
+  product Products @relation(fields: [id_product], references: [id_product])
+  @@id([id_order, id_product])
+}
+
+model BasketsHasProduct {
+  id_basket Int
+  id_product Int
+  basket Baskets @relation(fields: [id_basket], references: [id_basket])
+  product Products @relation(fields: [id_product], references: [id_product])
+  @@id([id_basket, id_product])
+}
+
+model OrdersHasStatus {
+  id_order Int
+  id_state Int
+  order Orders @relation(fields: [id_order], references: [id_order])
+  status Status @relation(fields: [id_state], references: [id_state])
+  @@id([id_order, id_state])
+}
+
+model WhishlistsHasProducts {
+  id_wishlist String
+  id_product Int
+  wishlist Wishlists @relation(fields: [id_wishlist], references: [id_wishlist])
+  product Products @relation(fields: [id_product], references: [id_product])
+  @@id([id_wishlist, id_product])
+}
