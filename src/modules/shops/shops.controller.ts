@@ -9,14 +9,23 @@ import {
 } from '@nestjs/common';
 import { ShopsService } from './shops.service';
 import { Shops } from '@prisma/client';
+import { ProductsService } from '../products/products.service';
 
 @Controller('shops')
 export class ShopsController {
-  constructor(private readonly shopsService: ShopsService) {}
+  constructor(
+    private readonly shopsService: ShopsService,
+    private readonly productsService: ProductsService,
+  ) {}
 
   @Post()
   create(@Body() shop: Shops) {
     return this.shopsService.create(shop);
+  }
+
+  @Get(':id/products')
+  findAllProductsByIdShop(@Param('id') id: string) {
+    return this.productsService.findAllByIdShop(+id);
   }
 
   // @Get()

@@ -13,6 +13,7 @@ import { PermissionsModule } from './modules/permissions/permissions.module';
 import { AddressModule } from './modules/address/address.module';
 import { SellersModule } from './modules/sellers/sellers.module';
 import { ShopsModule } from './modules/shops/shops.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ShopsModule } from './modules/shops/shops.module';
     AddressModule,
     SellersModule,
     ShopsModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [AppService, AuthService, PrismaService, UsersService],
