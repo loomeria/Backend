@@ -12,6 +12,7 @@ import { PrismaService } from './modules/prisma/prisma.service';
 import { PermissionsModule } from './modules/permissions/permissions.module';
 import { AddressModule } from './modules/address/address.module';
 import { SellersModule } from './modules/sellers/sellers.module';
+import { ShopsModule } from './modules/shops/shops.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { SellersModule } from './modules/sellers/sellers.module';
     PermissionsModule,
     AddressModule,
     SellersModule,
+    ShopsModule,
   ],
   controllers: [],
   providers: [AppService, AuthService, PrismaService, UsersService],
