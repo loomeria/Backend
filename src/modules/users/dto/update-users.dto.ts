@@ -6,7 +6,6 @@ export const UserUpdateDto = z.object({
   last_name: z.string().optional(),
   username: z.string().optional(),
   mail: z.string().email().optional(),
-  password: z.string().optional(),
   id_permission: z.number().optional(),
   verify_email: z.boolean().optional(),
 });

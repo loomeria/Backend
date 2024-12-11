@@ -8,6 +8,7 @@ export const UserCreateDto = z.object({
   mail: z.string().email(),
   password: z.string(),
   id_permission: z.number(),
+  verify_mail: z.boolean(),
 });
 
 export type UserCreateDto = z.infer<typeof UserCreateDto>;

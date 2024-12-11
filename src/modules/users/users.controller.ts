@@ -17,6 +17,9 @@ import { SellersService } from '../sellers/sellers.service';
 import { UserCreateDto } from './dto/create-users.dto';
 import { UserUpdateDto } from './dto/update-users.dto';
 
+const ERROR_MESSAGE_PASSWORD_INVALIDE =
+  'The password must be at least 8 characters long, include at least one lowercase letter, one uppercase letter, one number, and one special character (@, $, !, %, *, ?, &, -, _, or #), and must not contain spaces.';
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -36,6 +39,16 @@ export class UsersController {
           },
           HttpStatus.BAD_REQUEST,
         );
+      } else {
+        if (UsersService.passwordIsValid(user.password) === false) {
+          throw new HttpException(
+            {
+              status: HttpStatus.BAD_REQUEST,
+              error: ERROR_MESSAGE_PASSWORD_INVALIDE,
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
 
       return await this.usersService.createUser({ data: user });
@@ -204,5 +217,36 @@ export class UsersController {
   @Delete(':id/sellers')
   async deleteSellerByUserId(@Param('id') id: number): Promise<Sellers> {
     return this.sellersService.removeByIdUser(id);
+  }
+
+  @Patch(':id/password')
+  async updatePassword(
+    @Param('id') id: number,
+    @Body('password') password: string,
+  ): Promise<Users> {
+    try {
+      if (UsersService.passwordIsValid(password) === false) {
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: ERROR_MESSAGE_PASSWORD_INVALIDE,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        return this.usersService.UpdatePassword(Number(id), password);
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message || 'An unexpected error occurred',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
