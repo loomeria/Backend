@@ -146,7 +146,7 @@ model Orders {
 }
 
 model Shops {
-  id_shop     String     @id @db.VarChar(50)
+  id_shop     Int        @id
   name        String     @db.VarChar(50)
   description String     @db.VarChar(1000)
   address     String?    @db.VarChar(100)
@@ -191,7 +191,7 @@ model Products {
   id_categories     Int
   id_discount       Int?
   id_collection     Int
-  id_shop           String              @db.VarChar(50)
+  id_shop           Int
   categories        Categories          @relation(fields: [id_categories], references: [id_categories])
   discount          Discounts?          @relation(fields: [id_discount], references: [id_discount])
   collection        Collections         @relation(fields: [id_collection], references: [id_collection])
