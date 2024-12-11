@@ -1,20 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { SellersService } from './sellers.service';
-import { CreateSellerDto } from './dto/create-seller.dto';
-import { UpdateSellerDto } from './dto/update-seller.dto';
-import { Sellers } from '@prisma/client';
+import { ShopsService } from '../shops/shops.service';
 
 @Controller('sellers')
 export class SellersController {
-  constructor(private readonly sellersService: SellersService) {}
+  constructor(
+    private readonly sellersService: SellersService,
+    private readonly shopService: ShopsService,
+  ) {}
+
+  @Get(':id/shops')
+  getAllShopsByIdSeller(@Param('id') id: string) {
+    return this.shopService.findAllByIdSeller(+id);
+  }
 
   // @Post()
   // create(@Body() seller: Sellers) {
