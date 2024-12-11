@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { SellersService } from './sellers.service';
 import { ShopsService } from '../shops/shops.service';
+import { Shops } from '@prisma/client';
 
 @Controller('sellers')
 export class SellersController {
@@ -14,6 +15,10 @@ export class SellersController {
     return this.shopService.findAllByIdSeller(+id);
   }
 
+  @Post(':id/shops')
+  createShopByIdSeller(@Param('id') id: string, @Body() shop: Shops) {
+    return this.shopService.create(shop);
+  }
   // @Post()
   // create(@Body() seller: Sellers) {
   //   return this.sellersService.create(seller);
