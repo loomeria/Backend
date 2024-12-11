@@ -1,11 +1,13 @@
-export class CreateUserDto {
-  civility: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-  mail: string;
-  password: string;
-  id_permission: number;
-  verify_mail: boolean;
-  id_user: number;
-}
+import { z } from 'zod';
+
+export const UserCreateDto = z.object({
+  civility: z.string(),
+  first_name: z.string(),
+  last_name: z.string(),
+  username: z.string(),
+  mail: z.string().email(),
+  password: z.string(),
+  id_permission: z.number(),
+});
+
+export type UserCreateDto = z.infer<typeof UserCreateDto>;

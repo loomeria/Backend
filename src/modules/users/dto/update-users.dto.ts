@@ -1,10 +1,14 @@
-export class UpdateUserDto {
-  civility?: string;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  mail?: string;
-  password?: string;
-  id_permission?: number;
-  deleted_at?: Date; // Optionnel pour un soft delete
-}
+import { z } from 'zod';
+
+export const UserUpdateDto = z.object({
+  civility: z.string().optional(),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+  username: z.string().optional(),
+  mail: z.string().email().optional(),
+  password: z.string().optional(),
+  id_permission: z.number().optional(),
+  verify_email: z.boolean().optional(),
+});
+
+export type UserUpdateDto = z.infer<typeof UserUpdateDto>;

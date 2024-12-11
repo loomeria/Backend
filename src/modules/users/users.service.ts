@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Users } from '@prisma/client';
+import { Users } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -7,13 +7,15 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOne(username: string): Promise<Users | null> {
-    console.log('username', username);
-
-    return this.prisma.users.findFirst({
-      where: {
-        username: username,
-      },
-    });
+    try {
+      return this.prisma.users.findFirst({
+        where: {
+          username: username,
+        },
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
   async createUser({ data }: { data: Users }): Promise<Users> {
@@ -24,7 +26,9 @@ export class UsersService {
 
   async getUserById(id: number): Promise<Users | null> {
     return this.prisma.users.findUnique({
-      where: { id_user: id },
+      where: {
+        id_user: id,
+      },
     });
   }
 
@@ -44,5 +48,14 @@ export class UsersService {
       where: { id_user: id },
       data: { deleted_at: new Date() },
     });
+  }
+
+  async userExistsById(id: number): Promise<boolean> {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id_user: id,
+      },
+    });
+    return !!user;
   }
 }
