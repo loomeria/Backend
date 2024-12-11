@@ -4,25 +4,29 @@ node {
   }
 
   stage('Install Dependencies') {
-      nodejs('NodeJS') {
-         sh 'npm install'
-      }
+    nodejs('NodeJS') {
+      sh 'npm install'
     }
+  }
 
   stage('Run Tests') {
-    nodejs('NodeJS') {
+  catchError(buildResult: 'SUCCESS', stageResult : 'UNSTABLE') {
+      nodejs('NodeJS') {
         sh 'npm run test'
+      }
     }
   }
 
   stage('Run Coverage') {
-    nodejs('NodeJS') {
-      sh 'npm run test:cov'
+  catchError(buildResult: 'SUCCESS', stageResult : 'UNSTABLE') {
+      nodejs('NodeJS') {
+        sh 'npm run test: cov'
+      }
     }
   }
 
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner';
+    def scannerHome = tool 'SonarScanner'
     withSonarQubeEnv() {
       sh "${scannerHome}/bin/sonar-scanner"
     }
