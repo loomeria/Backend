@@ -82,12 +82,12 @@ export class UsersService {
       where: {
         username: username,
         id_user: {
-          not: id, // Exclure l'utilisateur actuel
+          not: id,
         },
       },
     });
 
-    return user ? true : false; // Retourne true si un autre utilisateur existe avec le même username
+    return !!user;
   }
 
   async UpdatePassword(id: number, password: string): Promise<Users> {

@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Post,
   Request,
+  Res,
   SetMetadata,
   UnauthorizedException,
   UseGuards,
@@ -15,6 +16,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../modules/users/users.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { Response } from 'express';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -29,7 +31,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
-  async signIn(@Body() signInDto: Record<string, any>) {
+  async signIn(@Body() signInDto: Record<string, any>, @Res() res: Response) {
     try {
       //verify if the user exists
       const user = await this.usersService.findOne(signInDto.username);
@@ -39,7 +41,22 @@ export class AuthController {
         throw new UnauthorizedException();
       }
 
-      return this.authService.signIn(signInDto.username, signInDto.password);
+      const token = await this.authService.signIn(
+        signInDto.username,
+        signInDto.password,
+      );
+
+      console.log(token);
+      // Set the token in the response header
+      res.cookie('access_token', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 3600000,
+      });
+
+      // Optionally send a response body or just end the response
+      return res.status(200).send({ message: 'Login successful' });
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
