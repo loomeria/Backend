@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSellerDto } from './dto/create-seller.dto';
-import { UpdateSellerDto } from './dto/update-seller.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Sellers } from '@prisma/client';
 
@@ -42,7 +40,6 @@ export class SellersService {
       data: seller,
     });
   }
-
 
   removeByIdUser(id: number) {
     return this.prisma.sellers.delete({
