@@ -51,7 +51,7 @@ export class AuthController {
       res.cookie('access_token', token, {
         httpOnly: true,
         secure: false,
-        sameSite: 'strict',
+        sameSite: 'none',
         maxAge: 3600000,
       });
 
