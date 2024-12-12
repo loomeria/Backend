@@ -127,6 +127,17 @@ export class UsersController {
           HttpStatus.BAD_REQUEST,
         );
       }
+
+      if (!(await this.usersService.userExistsById(Number(id)))) {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       if (
         await this.usersService.usernameAlreadyExistsExceptCurrentUsername(
           user.username,

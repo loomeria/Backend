@@ -41,6 +41,8 @@ export class UsersService {
   }
 
   async updateUser(id: number, data: Partial<Users>): Promise<Users> {
+    data.updated_at = new Date();
+
     return this.prisma.users.update({
       where: { id_user: id },
       data,
