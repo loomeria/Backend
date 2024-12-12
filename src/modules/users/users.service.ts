@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Users } from '@prisma/client';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Permissions, Users } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
@@ -119,5 +119,51 @@ export class UsersService {
     }
 
     return true;
+  }
+
+  async getPermissionsByUserId(id: number): Promise<Permissions | null> {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id_user: id,
+      },
+      select: {
+        id_permission: true,
+      },
+    });
+
+    // Vérification si l'utilisateur existe
+    if (!user) {
+      console.error(`Utilisateur avec l'ID ${id} non trouvé.`);
+      return null; // Ou vous pouvez lancer une exception
+    }
+
+    // Recherche des permissions associées
+    const permissions = await this.prisma.permissions.findUnique({
+      where: {
+        id_permission: user.id_permission,
+      },
+    });
+
+    // Vérification si les permissions existent
+    if (!permissions) {
+      console.error(
+        `Permissions pour l'ID ${user.id_permission} non trouvées.`,
+      );
+      return null; // Ou gérer selon vos besoins
+    }
+
+    return permissions;
+  }
+
+  async throwErrorUserNotFound(id: number) {
+    if (!(await this.userExistsById(Number(id)))) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 }

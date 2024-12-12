@@ -15,8 +15,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
 
-    console.log('passage ici isPublic', isPublic);
-
     if (isPublic) {
       return true;
     }

@@ -11,7 +11,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Address, Sellers, Users } from '@prisma/client';
+import { Address, Permissions, Sellers, Users } from '@prisma/client';
 import { AddressService } from '../address/address.service';
 import { SellersService } from '../sellers/sellers.service';
 import { UserCreateDto } from './dto/create-users.dto';
@@ -82,15 +82,7 @@ export class UsersController {
     try {
       const user = await this.usersService.getUserById(Number(id));
 
-      if (!user) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+      await this.usersService.throwErrorUserNotFound(Number(id));
 
       return user;
     } catch (error) {
@@ -128,15 +120,7 @@ export class UsersController {
         );
       }
 
-      if (!(await this.usersService.userExistsById(Number(id)))) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+      await this.usersService.throwErrorUserNotFound(Number(id));
 
       if (
         await this.usersService.usernameAlreadyExistsExceptCurrentUsername(
@@ -171,15 +155,7 @@ export class UsersController {
   @Delete(':id')
   async deleteUser(@Param('id') id: number): Promise<Users> {
     try {
-      if (!(await this.usersService.userExistsById(Number(id)))) {
-        throw new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+      await this.usersService.throwErrorUserNotFound(Number(id));
 
       return this.usersService.deleteUser(Number(id));
     } catch (error) {
@@ -266,9 +242,29 @@ export class UsersController {
           },
           HttpStatus.BAD_REQUEST,
         );
-      } else {
-        return this.usersService.UpdatePassword(Number(id), password);
       }
+
+      return this.usersService.UpdatePassword(Number(id), password);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message || 'An unexpected error occurred',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get(':id/permissions')
+  async getUserPermissions(@Param('id') id: number): Promise<Permissions> {
+    try {
+      await this.usersService.throwErrorUserNotFound(Number(id));
+
+      return this.usersService.getPermissionsByUserId(Number(id));
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
