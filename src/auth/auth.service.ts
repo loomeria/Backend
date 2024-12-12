@@ -24,4 +24,22 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async validateUser(username: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne(username);
+    if (!(await bcrypt.compare(pass, user.password))) {
+      throw new UnauthorizedException();
+    }
+    const payload = { sub: user.id_user, username: user.username };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async login(user: any) {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
 }

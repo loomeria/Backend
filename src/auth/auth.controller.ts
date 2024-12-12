@@ -11,9 +11,10 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { UsersService } from '../modules/users/users.service';
+import { LocalAuthGuard } from './local-auth.guard';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -25,14 +26,15 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
-  @Public()
   @HttpCode(HttpStatus.OK)
+  @Public()
   @Post('login')
   async signIn(@Body() signInDto: Record<string, any>) {
     try {
       //verify if the user exists
       const user = await this.usersService.findOne(signInDto.username);
       console.log(user);
+
       if (!user) {
         throw new UnauthorizedException();
       }
@@ -54,9 +56,15 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('auth/logout')
+  async logout(@Request() req) {
+    return req.logout();
   }
 }

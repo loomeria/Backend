@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { SetMetadata } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../modules/users/users.module';
 import { jwtConstants } from './constant';
-import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersService } from '../modules/users/users.service';
 import { PrismaService } from '../modules/prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { LocalStrategy } from './local.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt.strategy';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 // export const IS_PUBLIC_KEY = 'isPublic';
 // export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -17,6 +18,7 @@ import { Prisma } from '@prisma/client';
 @Module({
   imports: [
     UsersModule,
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
@@ -27,8 +29,10 @@ import { Prisma } from '@prisma/client';
     AuthService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: JwtAuthGuard,
     },
+    LocalStrategy,
+    JwtStrategy,
     PrismaService,
     UsersService,
   ],
