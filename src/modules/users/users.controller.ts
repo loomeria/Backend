@@ -107,10 +107,10 @@ export class UsersController {
     }
   }
 
-  // @Get()
-  // async getAllUsers(): Promise<Users[]> {
-  //   return this.usersService.getAllUsers();
-  // }
+  @Get()
+  async getAllUsers(): Promise<Users[]> {
+    return this.usersService.getAllUsers();
+  }
 
   @Put(':id')
   async updateUser(
