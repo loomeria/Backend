@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Permissions, Users } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import {UserCreateDto} from "./dto/create-users.dto";
 
 export const SaltOrRounds = 10;
 
@@ -21,12 +22,28 @@ export class UsersService {
     }
   }
 
+  async findByEmail(email: string): Promise<Users | null> {
+    try {
+      return this.prisma.users.findFirst({
+        where: {
+          username: email,
+        }
+      })
+    }catch (error) {
+      return error;
+    }
+  }
+
   async createUser({ data }: { data: Users }): Promise<Users> {
     data.password = await bcrypt.hash(data.password, SaltOrRounds);
     return this.prisma.users.create({
       data,
     });
   }
+
+  // async create(createUserDto: UserCreateDto){
+  //   const user = await this.prisma.users.create(createUserDto)
+  // }
 
   async getUserById(id: number): Promise<Users | null> {
     return this.prisma.users.findUnique({

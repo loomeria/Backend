@@ -11,6 +11,9 @@ import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import {ConfigModule} from "@nestjs/config";
+import googleOauthConfig from "./config/google-oauth.config";
+import {GoogleStrategy} from "./stategies/google.stategy";
 
 // export const IS_PUBLIC_KEY = 'isPublic';
 // export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -23,7 +26,9 @@ import { JwtAuthGuard } from './jwt-auth.guard';
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60000000s' },
+
     }),
+    ConfigModule.forFeature(googleOauthConfig)
   ],
   providers: [
     AuthService,
@@ -35,6 +40,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
     JwtStrategy,
     PrismaService,
     UsersService,
+      GoogleStrategy
   ],
   controllers: [AuthController],
   exports: [AuthService],

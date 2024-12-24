@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
-  Post,
+  Post, Req,
   Request,
   Res,
   SetMetadata,
@@ -17,6 +17,7 @@ import { UsersService } from '../modules/users/users.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Response } from 'express';
+import {GoogleAuthGuard} from "./guards/google-auth/google-auth.guard";
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -88,5 +89,19 @@ export class AuthController {
   @Post('auth/logout')
   async logout(@Request() req) {
     return req.logout();
+  }
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get("google/login")
+  googleLogin() {
+
+  }
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get("google/callback")
+  googleCallback() {
+
   }
 }

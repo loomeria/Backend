@@ -2,6 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../modules/users/users.service';
+import {UserCreateDto} from "../modules/users/dto/create-users.dto";
+import {Users} from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -48,5 +50,11 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async validateGoogleUser({ data }: { data: Users }){
+    const user = await this.usersService.findByEmail(data.mail);
+    if(user) return user;
+    return await this.usersService.createUser({ data: user });
   }
 }
