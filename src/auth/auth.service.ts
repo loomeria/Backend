@@ -25,9 +25,19 @@ export class AuthService {
       };
     }
 
-    if (!(await bcrypt.compare(pass, user.password))) {
-      throw new UnauthorizedException();
+
+    if(pass != undefined){
+      console.log("Password " +user.password);
+      console.log("Pass " +pass);
+
+      console.log("PASSAGE in if");
+
+      if (!(await bcrypt.compare(pass, user.password))) {
+        throw new UnauthorizedException();
+      }
     }
+
+    console.log("PASSAGE Sign1");
     const payload = { sub: user.id_user, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -52,9 +62,22 @@ export class AuthService {
     };
   }
 
-  async validateGoogleUser({ data }: { data: Users }){
-    const user = await this.usersService.findByEmail(data.mail);
-    if(user) return user;
-    return await this.usersService.createUser({ data: user });
+  async validateGoogleUser(user: Users  ): Promise<Users> {
+
+    console.log("Type of " + typeof user);
+
+    if(UserCreateDto.safeParse(user).success === false){
+
+    }
+    else{
+      const userReturn = await this.usersService.findByEmail(user.mail);
+      if(userReturn) return userReturn;
+
+      console.log("validateGoogleUser : " + user)
+      console.log(user.username)
+
+      return await this.usersService.createUser({data : user});
+    }
+
   }
 }

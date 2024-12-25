@@ -24,7 +24,7 @@ model Baskets {
 }
 
 model Permissions {
-  id_permission Int       @id
+  id_permission Int       @id @default(autoincrement())
   name          String    @unique @db.VarChar(50)
   created_at    DateTime  @default(now())
   updated_at    DateTime?

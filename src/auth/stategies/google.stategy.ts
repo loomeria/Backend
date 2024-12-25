@@ -6,6 +6,7 @@ import {ConfigType} from "@nestjs/config";
 import googleOauthConfig from "../config/google-oauth.config";
 import {AuthService} from "../auth.service";
 import {Users} from "@prisma/client";
+import {UserCreateDto} from "../../modules/users/dto/create-users.dto";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy){
@@ -26,22 +27,28 @@ export class GoogleStrategy extends PassportStrategy(Strategy){
         console.log({profile});
 
         const userData: Users = {
-            id_user : 0,
+            id_user :  null,
             civility : "Mr",
             username : profile.name.givenName,
             mail: profile.emails[0].value,
-            id_permission: 1,
             first_name: profile.name.givenName,
             last_name: profile.name.familyName,
             password: "",
+            id_permission : 1,
             verify_mail : true,
             created_at : null,
             updated_at : null,
             deleted_at :null,
             last_login : null,
-        };
 
-        const user = await this.authService.validateGoogleUser({ data: userData });
+
+    };
+
+
+        UserCreateDto.safeParse(userData);
+        console.log("validate : " + JSON.stringify(userData));
+
+        const user = await this.authService.validateGoogleUser(userData);
 
         done(null, user);
     }

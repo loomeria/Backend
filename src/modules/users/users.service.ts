@@ -34,12 +34,54 @@ export class UsersService {
     }
   }
 
+  // async createUser({ data }: { data: Users }): Promise<Users> {
+  //
+  //   console.log("PERMISSIONS : " + data.id_permission);
+  //
+  //   if(data.password !== null){
+  //     data.password = await bcrypt.hash(data.password, SaltOrRounds);
+  //   }
+  //
+  //   return this.prisma.users.create({
+  //     data
+  //   });
+  // }
+
   async createUser({ data }: { data: Users }): Promise<Users> {
-    data.password = await bcrypt.hash(data.password, SaltOrRounds);
+    console.log("PERMISSIONS : " + data.id_permission);
+
+    // Hash du mot de passe si fourni
+    if (data.password !== null && data.password.trim() !== "") {
+      data.password = await bcrypt.hash(data.password, SaltOrRounds);
+    }
+
+    // Validation de l'id_permission
+    if (!data.id_permission) {
+      throw new Error("id_permission is required to create a user");
+    }
+
     return this.prisma.users.create({
-      data,
+      data: {
+        civility: data.civility,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        username: data.username,
+        mail: data.mail,
+        verify_mail: data.verify_mail,
+        password: data.password,
+        created_at: data.created_at ?? undefined, // Utilisez undefined si aucune valeur
+        updated_at: data.updated_at ?? undefined,
+        deleted_at: data.deleted_at ?? undefined,
+        last_login: data.last_login ?? undefined,
+        // Gestion de la relation avec Permissions
+        permission: {
+          connect: { id_permission: data.id_permission }, // Connecte à une permission existante
+        },
+      },
     });
   }
+
+
 
   // async create(createUserDto: UserCreateDto){
   //   const user = await this.prisma.users.create(createUserDto)
