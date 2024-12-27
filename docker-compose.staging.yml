@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: loomeria-bs:latest
@@ -12,3 +10,8 @@ services:
       - GOOGLE_CLIENT_ID=${STAGING_GOOGLE_CLIENT_ID}
       - GOOGLE_SECRET=${STAGING_GOOGLE_SECRET}
       - GOOGLE_CALLBACK_URL=${STAGING_GOOGLE_CALLBACK_URL}
+
+networks:
+  cloudflare:
+    name: cloudflare
+    external: true
