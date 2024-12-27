@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    image: loomeria-bp:latest
+    networks:
+      cloudflare:
+        ipv4_address: 172.20.0.30
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${PRODUCTION_DATABASE_URL}
+      - GOOGLE_CLIENT_ID=${PRODUCTION_GOOGLE_CLIENT_ID}
+      - GOOGLE_SECRET=${PRODUCTION_GOOGLE_SECRET}
+      - GOOGLE_CALLBACK_URL=${PRODUCTION_GOOGLE_CALLBACK_URL}

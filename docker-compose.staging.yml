@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    image: loomeria-bs:latest
+    networks:
+      cloudflare:
+        ipv4_address: 172.20.0.31
+    environment:
+      - NODE_ENV=staging
+      - DATABASE_URL=${STAGING_DATABASE_URL}
+      - GOOGLE_CLIENT_ID=${STAGING_GOOGLE_CLIENT_ID}
+      - GOOGLE_SECRET=${STAGING_GOOGLE_SECRET}
+      - GOOGLE_CALLBACK_URL=${STAGING_GOOGLE_CALLBACK_URL}

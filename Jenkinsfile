@@ -26,35 +26,46 @@ node {
   }
 
   stage('SonarQube Analysis') {
-    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-       def scannerHome = tool 'SonarScanner'
-       withSonarQubeEnv() {
-         sh "${scannerHome}/bin/sonar-scanner"
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+      def scannerHome = tool 'SonarScanner'
+      withSonarQubeEnv() {
+        sh "${scannerHome}/bin/sonar-scanner"
       }
     }
   }
 
   stage('Docker Build') {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-      sh 'docker build -t loomeria-backend:latest .'
+      def dockerBuildCmd = ''
+
+      if (env.BRANCH_NAME == 'main') {
+        dockerBuildCmd = 'loomeria-bp'
+      } else if (env.BRANCH_NAME == 'staging') {
+        dockerBuildCmd = 'loomeria-bs'
+      } else {
+        error "Unsupported branch: ${env.BRANCH_NAME}"
+      }
+
+      sh """
+      docker build -t ${dockerBuildCmd}:latest .
+      """
     }
   }
 
   stage('Docker Replace and Run') {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-      def containerName = 'loomeria-backend'
+      def dockerComposeFile = ''
+
+      if (env.BRANCH_NAME == 'main') {
+        dockerComposeFile = 'docker-compose.production.yml'
+      } else if (env.BRANCH_NAME == 'staging') {
+        dockerComposeFile = 'docker-compose.staging.yml'
+      } else {
+        error "Unsupported branch: ${env.BRANCH_NAME}"
+      }
 
       sh """
-        if [ \$(docker ps -aq -f name=${containerName}) ]; then
-          docker rm -f ${containerName}
-        fi
-      """
-
-      sh """
-        docker run -d --name ${containerName} \
-          --network cloudflare \
-          --ip 172.20.0.30 \
-          loomeria-backend:latest
+        docker-compose -f ${dockerComposeFile} up -d
       """
     }
   }

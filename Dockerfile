@@ -24,5 +24,4 @@ FROM ${NODE_VERSION} AS production
 RUN apk add --no-cache openssl
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --chown=node:node .env ./
 CMD ["node", "dist/src/main.js"]
