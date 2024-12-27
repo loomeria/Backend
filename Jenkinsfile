@@ -65,7 +65,7 @@ node {
       }
 
       sh """
-        docker-compose -f ${dockerComposeFile} up -d
+        docker compose -f ${dockerComposeFile} up -d
       """
     }
   }
