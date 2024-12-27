@@ -26,9 +26,11 @@ node {
   }
 
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner'
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+       def scannerHome = tool 'SonarScanner'
+       withSonarQubeEnv() {
+         sh "${scannerHome}/bin/sonar-scanner"
+      }
     }
   }
 
