@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Permissions, Users } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import {UserCreateDto} from "./dto/create-users.dto";
 
 export const SaltOrRounds = 10;
 
@@ -27,9 +26,9 @@ export class UsersService {
       return this.prisma.users.findFirst({
         where: {
           username: email,
-        }
-      })
-    }catch (error) {
+        },
+      });
+    } catch (error) {
       return error;
     }
   }
@@ -48,16 +47,16 @@ export class UsersService {
   // }
 
   async createUser({ data }: { data: Users }): Promise<Users> {
-    console.log("PERMISSIONS : " + data.id_permission);
+    console.log('PERMISSIONS : ' + data.id_permission);
 
     // Hash du mot de passe si fourni
-    if (data.password !== null && data.password.trim() !== "") {
+    if (data.password !== null && data.password.trim() !== '') {
       data.password = await bcrypt.hash(data.password, SaltOrRounds);
     }
 
     // Validation de l'id_permission
     if (!data.id_permission) {
-      throw new Error("id_permission is required to create a user");
+      throw new Error('id_permission is required to create a user');
     }
 
     return this.prisma.users.create({
@@ -80,8 +79,6 @@ export class UsersService {
       },
     });
   }
-
-
 
   // async create(createUserDto: UserCreateDto){
   //   const user = await this.prisma.users.create(createUserDto)

@@ -19,6 +19,7 @@ export class SellersController {
   createShopByIdSeller(@Param('id') id: string, @Body() shop: Shops) {
     return this.shopService.create(shop);
   }
+
   // @Post()
   // create(@Body() seller: Sellers) {
   //   return this.sellersService.create(seller);

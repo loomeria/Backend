@@ -21,7 +21,8 @@ ALTER TABLE "Products" DROP CONSTRAINT "Products_id_categories_fkey";
 
 -- AlterTable
 ALTER TABLE "Categories" DROP CONSTRAINT "Categories_pkey",
-DROP COLUMN "id_categories",
+DROP
+COLUMN "id_categories",
 ADD COLUMN     "id_categories" INTEGER NOT NULL,
 ADD CONSTRAINT "Categories_pkey" PRIMARY KEY ("id_categories");
 
@@ -31,9 +32,11 @@ ADD COLUMN     "id_preference" INTEGER NOT NULL;
 
 -- AlterTable
 ALTER TABLE "Preferencies" DROP CONSTRAINT "Preferencies_pkey",
-DROP COLUMN "id_preference",
+DROP
+COLUMN "id_preference",
 ADD COLUMN     "id_preference" INTEGER NOT NULL,
-DROP COLUMN "id_categories",
+DROP
+COLUMN "id_categories",
 ADD COLUMN     "id_categories" INTEGER NOT NULL,
 ADD CONSTRAINT "Preferencies_pkey" PRIMARY KEY ("id_preference");
 
@@ -42,10 +45,13 @@ ALTER TABLE "Products" DROP COLUMN "id_categories",
 ADD COLUMN     "id_categories" INTEGER NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "Preferencies" ADD CONSTRAINT "Preferencies_id_categories_fkey" FOREIGN KEY ("id_categories") REFERENCES "Categories"("id_categories") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Preferencies"
+    ADD CONSTRAINT "Preferencies_id_categories_fkey" FOREIGN KEY ("id_categories") REFERENCES "Categories" ("id_categories") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Customers" ADD CONSTRAINT "Customers_id_preference_fkey" FOREIGN KEY ("id_preference") REFERENCES "Preferencies"("id_preference") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Customers"
+    ADD CONSTRAINT "Customers_id_preference_fkey" FOREIGN KEY ("id_preference") REFERENCES "Preferencies" ("id_preference") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Products" ADD CONSTRAINT "Products_id_categories_fkey" FOREIGN KEY ("id_categories") REFERENCES "Categories"("id_categories") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Products"
+    ADD CONSTRAINT "Products_id_categories_fkey" FOREIGN KEY ("id_categories") REFERENCES "Categories" ("id_categories") ON DELETE RESTRICT ON UPDATE CASCADE;

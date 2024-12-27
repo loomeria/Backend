@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
-  Post, Req,
+  Post,
   Request,
   Res,
   SetMetadata,
@@ -17,7 +17,7 @@ import { UsersService } from '../modules/users/users.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Response } from 'express';
-import {GoogleAuthGuard} from "./guards/google-auth/google-auth.guard";
+import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -36,7 +36,7 @@ export class AuthController {
     try {
       //verify if the user exists
 
-      if(signInDto.username != "Test" && signInDto.password != "Test"){
+      if (signInDto.username != 'Test' && signInDto.password != 'Test') {
         const user = await this.usersService.findOne(signInDto.username);
         console.log(user);
 
@@ -44,8 +44,6 @@ export class AuthController {
           throw new UnauthorizedException();
         }
       }
-
-
 
       const token = await this.authService.signIn(
         signInDto.username,
@@ -93,21 +91,22 @@ export class AuthController {
 
   @Public()
   @UseGuards(GoogleAuthGuard)
-  @Get("google/login")
-  googleLogin() {
-
-  }
+  @Get('google/login')
+  googleLogin() {}
 
   @Public()
   @UseGuards(GoogleAuthGuard)
-  @Get("google/callback")
-  async googleCallback(@Body() signInDto: Record<string, any>, @Res() res: Response) {
+  @Get('google/callback')
+  async googleCallback(
+    @Body() signInDto: Record<string, any>,
+    @Res() res: Response,
+  ) {
     try {
       //verify if the user exists
 
-      console.log("PASSAGE 1");
+      console.log('PASSAGE 1');
 
-      if(signInDto.username != "Test" && signInDto.password != "Test"){
+      if (signInDto.username != 'Test' && signInDto.password != 'Test') {
         const user = await this.usersService.findOne(signInDto.username);
         console.log(user);
 
@@ -116,11 +115,11 @@ export class AuthController {
         }
       }
 
-      console.log("PASSAGE 2");
+      console.log('PASSAGE 2');
 
       const token = await this.authService.signIn(
-          signInDto.username,
-          signInDto.password,
+        signInDto.username,
+        signInDto.password,
       );
 
       console.log(token);
@@ -132,7 +131,7 @@ export class AuthController {
         maxAge: 3600000,
       });
 
-      console.log("PASSAGE 3");
+      console.log('PASSAGE 3');
 
       // Optionally send a response body or just end the response
       return res.status(200).send({ message: 'Login successful' });
@@ -143,11 +142,11 @@ export class AuthController {
 
       // Otherwise, wrap the error in an INTERNAL_SERVER_ERROR
       throw new HttpException(
-          {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            error: error.message || 'An unexpected error occurred',
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: error.message || 'An unexpected error occurred',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

@@ -31,8 +31,7 @@ export class UsersController {
   @Post()
   async createUser(@Body() user: Users): Promise<Users> {
     try {
-
-      console.log("validate : " + JSON.stringify(user));
+      console.log('validate : ' + JSON.stringify(user));
 
       if (UserCreateDto.safeParse(user).success === false) {
         throw new HttpException(

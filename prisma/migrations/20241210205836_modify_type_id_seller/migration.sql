@@ -19,7 +19,8 @@ ADD COLUMN     "id_seller" INTEGER NOT NULL;
 
 -- AlterTable
 ALTER TABLE "Sellers" DROP CONSTRAINT "Sellers_pkey",
-DROP COLUMN "id_seller",
+DROP
+COLUMN "id_seller",
 ADD COLUMN     "id_seller" INTEGER NOT NULL,
 ADD CONSTRAINT "Sellers_pkey" PRIMARY KEY ("id_seller");
 
@@ -28,7 +29,9 @@ ALTER TABLE "Shops" DROP COLUMN "id_seller",
 ADD COLUMN     "id_seller" INTEGER NOT NULL;
 
 -- AddForeignKey
-ALTER TABLE "Shops" ADD CONSTRAINT "Shops_id_seller_fkey" FOREIGN KEY ("id_seller") REFERENCES "Sellers"("id_seller") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Shops"
+    ADD CONSTRAINT "Shops_id_seller_fkey" FOREIGN KEY ("id_seller") REFERENCES "Sellers" ("id_seller") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Chats" ADD CONSTRAINT "Chats_id_seller_fkey" FOREIGN KEY ("id_seller") REFERENCES "Sellers"("id_seller") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Chats"
+    ADD CONSTRAINT "Chats_id_seller_fkey" FOREIGN KEY ("id_seller") REFERENCES "Sellers" ("id_seller") ON DELETE RESTRICT ON UPDATE CASCADE;
