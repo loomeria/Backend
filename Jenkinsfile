@@ -40,7 +40,7 @@ node {
 
       if (env.BRANCH_NAME == 'main') {
         dockerBuildCmd = 'loomeria-bp'
-      } else if (env.BRANCH_NAME == 'staging') {
+      } else if (env.BRANCH_NAME == 'develop') {
         dockerBuildCmd = 'loomeria-bs'
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
@@ -58,7 +58,7 @@ node {
 
       if (env.BRANCH_NAME == 'main') {
         dockerComposeFile = 'docker-compose.production.yml'
-      } else if (env.BRANCH_NAME == 'staging') {
+      } else if (env.BRANCH_NAME == 'develop') {
         dockerComposeFile = 'docker-compose.staging.yml'
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
