@@ -95,7 +95,7 @@ node {
       }
 
       withEnv(dockerEnvVars) {
-        sh """"
+        sh """
         if docker ps -a --format \'{{.Names}}\' | grep -q "^${containerName}\$"; then
           echo "Container ${containerName} exists. Stopping and removing it..."
           docker stop ${containerName} && docker rm ${containerName} || true
@@ -103,7 +103,7 @@ node {
 
         echo "Starting container ${containerName}..."
         docker compose -f ${dockerComposeFile} up -d
-        """"
+        """
       }
     }
   }
