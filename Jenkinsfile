@@ -36,62 +36,74 @@ node {
 
   stage('Docker Build') {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-      def dockerBuildCmd = ''
+      def dockerImageTag = ''
 
       if (env.BRANCH_NAME == 'main') {
-        dockerBuildCmd = 'loomeria-bp'
+        dockerImageTag = 'loomeria-bp'
       } else if (env.BRANCH_NAME == 'develop') {
-        dockerBuildCmd = 'loomeria-bs'
+        dockerImageTag = 'loomeria-bs'
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
       }
 
       sh """
-      docker build -t ${dockerBuildCmd}:latest .
+      docker build -t ${dockerImageTag}:latest .
       """
     }
   }
 
-  stage('Docker Replace and Run') {
-    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+  stage('Docker Run') {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
       def dockerComposeFile = ''
+      def dockerEnvVars = []
+      def containerName = ''
 
       if (env.BRANCH_NAME == 'main') {
         dockerComposeFile = 'docker-compose.production.yml'
+        containerName = 'loomeria-bp'
         withCredentials([
           string(credentialsId: 'PRODUCTION_DATABASE_URL', variable: 'DATABASE_URL'),
           string(credentialsId: 'PRODUCTION_GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
           string(credentialsId: 'PRODUCTION_GOOGLE_SECRET', variable: 'GOOGLE_SECRET'),
           string(credentialsId: 'PRODUCTION_GOOGLE_CALLBACK_URL', variable: 'GOOGLE_CALLBACK_URL')
         ]) {
-          sh """
-          docker compose -f ${dockerComposeFile} \
-            --build-arg DATABASE_URL=${DATABASE_URL} \
-            --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-            --build-arg GOOGLE_SECRET=${GOOGLE_SECRET} \
-            --build-arg GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL} \
-            up -d
-          """
+          dockerEnvVars = [
+            "DATABASE_URL=${DATABASE_URL}",
+            "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}",
+            "GOOGLE_SECRET=${GOOGLE_SECRET}",
+            "GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}"
+          ]
         }
       } else if (env.BRANCH_NAME == 'develop') {
         dockerComposeFile = 'docker-compose.staging.yml'
+        containerName = 'loomeria-bs'
         withCredentials([
           string(credentialsId: 'STAGING_DATABASE_URL', variable: 'DATABASE_URL'),
           string(credentialsId: 'STAGING_GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
           string(credentialsId: 'STAGING_GOOGLE_SECRET', variable: 'GOOGLE_SECRET'),
           string(credentialsId: 'STAGING_GOOGLE_CALLBACK_URL', variable: 'GOOGLE_CALLBACK_URL')
         ]) {
-          sh """
-          docker compose -f ${dockerComposeFile} \
-            --build-arg DATABASE_URL=${DATABASE_URL} \
-            --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-            --build-arg GOOGLE_SECRET=${GOOGLE_SECRET} \
-            --build-arg GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL} \
-            up -d
-          """
+          dockerEnvVars = [
+            "DATABASE_URL=${DATABASE_URL}",
+            "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}",
+            "GOOGLE_SECRET=${GOOGLE_SECRET}",
+            "GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}"
+          ]
         }
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
+      }
+
+      withEnv(dockerEnvVars) {
+        sh """
+        if docker ps -a --format '{{.Names}}' | grep -q '^${containerName}$'; then
+          echo "Container ${containerName} exists. Stopping and removing it..."
+          docker stop ${containerName} || true
+          docker rm ${containerName} || true
+        fi
+
+        docker compose -f ${dockerComposeFile} up -d
+        """
       }
     }
   }

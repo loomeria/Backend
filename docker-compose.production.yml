@@ -1,6 +1,7 @@
 services:
   backend:
     image: loomeria-bp:latest
+    container_name: loomeria-bp
     networks:
       cloudflare:
         ipv4_address: 172.20.0.30
