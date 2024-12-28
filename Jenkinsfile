@@ -34,7 +34,7 @@ node {
     }
   }
 
- stage('Docker Build') {
+  stage('Docker Build') {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
       def dockerBuildCmd = ''
 
@@ -55,31 +55,34 @@ node {
   stage('Docker Replace and Run') {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
       def dockerComposeFile = ''
-      def envVars = ''
+      def databaseUrl = ''
+      def googleClientId = ''
+      def googleClientSecret = ''
+      def googleCallbackUrl = ''
 
       if (env.BRANCH_NAME == 'main') {
+        databaseUrl = credentials('PRODUCTION_DATABASE_URL')
+        googleClientId = credentials('PRODUCTION_GOOGLE_CLIENT_ID')
+        googleClientSecret = credentials('PRODUCTION_GOOGLE_CLIENT_SECRET')
+        googleCallbackUrl = credentials('PRODUCTION_GOOGLE_CALLBACK_URL')
         dockerComposeFile = 'docker-compose.production.yml'
-        envVars = """
-        export PRODUCTION_DATABASE_URL=${PRODUCTION_DATABASE_URL}
-        export PRODUCTION_GOOGLE_CLIENT_ID=${PRODUCTION_GOOGLE_CLIENT_ID}
-        export PRODUCTION_GOOGLE_CLIENT_SECRET=${PRODUCTION_GOOGLE_CLIENT_SECRET}
-        export PRODUCTION_GOOGLE_CALLBACK_URL=${PRODUCTION_GOOGLE_CALLBACK_URL}
-        """
       } else if (env.BRANCH_NAME == 'develop') {
+        databaseUrl = credentials('STAGING_DATABASE_URL')
+        googleClientId = credentials('STAGING_GOOGLE_CLIENT_ID')
+        googleClientSecret = credentials('STAGING_GOOGLE_CLIENT_SECRET')
+        googleCallbackUrl = credentials('STAGING_GOOGLE_CALLBACK_URL')
         dockerComposeFile = 'docker-compose.staging.yml'
-        envVars = """
-        export STAGING_DATABASE_URL=${STAGING_DATABASE_URL}
-        export STAGING_GOOGLE_CLIENT_ID=${STAGING_GOOGLE_CLIENT_ID}
-        export STAGING_GOOGLE_CLIENT_SECRET=${STAGING_GOOGLE_CLIENT_SECRET}
-        export STAGING_GOOGLE_CALLBACK_URL=${STAGING_GOOGLE_CALLBACK_URL}
-        """
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
       }
 
       sh """
-        ${envVars}
-        docker compose -f ${dockerComposeFile} up -d
+      docker compose -f ${dockerComposeFile} \
+        --build-arg DATABASE_URL=${databaseUrl} \
+        --build-arg GOOGLE_CLIENT_ID=${googleClientId} \
+        --build-arg GOOGLE_CLIENT_SECRET=${googleClientSecret} \
+        --build-arg GOOGLE_CALLBACK_URL=${googleCallbackUrl} \
+        up -d
       """
     }
   }
