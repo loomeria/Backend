@@ -61,14 +61,14 @@ node {
         withCredentials([
           string(credentialsId: 'PRODUCTION_DATABASE_URL', variable: 'DATABASE_URL'),
           string(credentialsId: 'PRODUCTION_GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-          string(credentialsId: 'PRODUCTION_GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
+          string(credentialsId: 'PRODUCTION_GOOGLE_SECRET', variable: 'GOOGLE_SECRET'),
           string(credentialsId: 'PRODUCTION_GOOGLE_CALLBACK_URL', variable: 'GOOGLE_CALLBACK_URL')
         ]) {
           sh """
           docker compose -f ${dockerComposeFile} \
             --build-arg DATABASE_URL=${DATABASE_URL} \
             --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-            --build-arg GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+            --build-arg GOOGLE_SECRET=${GOOGLE_SECRET} \
             --build-arg GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL} \
             up -d
           """
@@ -78,14 +78,14 @@ node {
         withCredentials([
           string(credentialsId: 'STAGING_DATABASE_URL', variable: 'DATABASE_URL'),
           string(credentialsId: 'STAGING_GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-          string(credentialsId: 'STAGING_GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
+          string(credentialsId: 'STAGING_GOOGLE_SECRET', variable: 'GOOGLE_SECRET'),
           string(credentialsId: 'STAGING_GOOGLE_CALLBACK_URL', variable: 'GOOGLE_CALLBACK_URL')
         ]) {
           sh """
           docker compose -f ${dockerComposeFile} \
             --build-arg DATABASE_URL=${DATABASE_URL} \
             --build-arg GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-            --build-arg GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
+            --build-arg GOOGLE_SECRET=${GOOGLE_SECRET} \
             --build-arg GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL} \
             up -d
           """
