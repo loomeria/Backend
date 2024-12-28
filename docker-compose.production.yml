@@ -1,0 +1,18 @@
+services:
+  backend:
+    image: loomeria-bp:latest
+    container_name: loomeria-bp
+    networks:
+      cloudflare:
+        ipv4_address: 172.20.0.30
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
+      - GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}
+
+networks:
+  cloudflare:
+    name: cloudflare
+    external: true

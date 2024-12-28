@@ -1,0 +1,17 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/users/5
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "id_permission":1
+  }
+}
