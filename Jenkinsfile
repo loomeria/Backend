@@ -10,10 +10,8 @@ node {
   }
 
   stage('Run Tests') {
-    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-      nodejs('NodeJS') {
-        sh 'npm run test'
-      }
+    nodejs('NodeJS') {
+      sh 'npm run test'
     }
   }
 
