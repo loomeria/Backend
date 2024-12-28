@@ -40,7 +40,7 @@ node {
 
       if (env.BRANCH_NAME == 'main') {
         dockerImageTag = 'loomeria-bp'
-      } else if (env.BRANCH_NAME == 'develop') {
+      } else if (env.BRANCH_NAME == 'staging') {
         dockerImageTag = 'loomeria-bs'
       } else {
         error "Unsupported branch: ${env.BRANCH_NAME}"
@@ -74,7 +74,7 @@ node {
             "GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}"
           ]
         }
-      } else if (env.BRANCH_NAME == 'develop') {
+      } else if (env.BRANCH_NAME == 'staging') {
         dockerComposeFile = 'docker-compose.staging.yml'
         containerName = 'loomeria-bs'
         withCredentials([
