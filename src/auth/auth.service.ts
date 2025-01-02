@@ -12,18 +12,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(
-    username: string,
-    pass: string,
-  ): Promise<{ access_token: string }> {
+  async signIn(username: string, pass: string): Promise<string> {
     const user = await this.usersService.findOne(username);
-
-    if (username == 'Test' && pass == 'Test') {
-      const payload = { sub: 0, username: 'test' };
-      return {
-        access_token: await this.jwtService.signAsync(payload),
-      };
-    }
 
     if (pass != undefined) {
       console.log('Password ' + user.password);
@@ -38,9 +28,7 @@ export class AuthService {
 
     console.log('PASSAGE Sign1');
     const payload = { sub: user.id_user, username: user.username };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return await this.jwtService.signAsync(payload);
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
