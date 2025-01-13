@@ -15,12 +15,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     private googleConfiguration: ConfigType<typeof googleOauthConfig>,
     private authService: AuthService,
   ) {
-    super({
-      clientID: googleConfiguration.clientID,
-      clientSecret: googleConfiguration.clientSecret,
-      callbackURL: googleConfiguration.callbackURL,
-      scope: ['email', 'profile'],
-    });
+    super()
+    // super({
+    //   clientID: googleConfiguration.clientID,
+    //   clientSecret: googleConfiguration.clientSecret,
+    //   callbackURL: googleConfiguration.callbackURL,
+    //   scope: ['email', 'profile'],
+    // });
   }
 
   async validate(
