@@ -15,9 +15,11 @@ ADD COLUMN     "id_shop" INTEGER NOT NULL;
 
 -- AlterTable
 ALTER TABLE "Shops" DROP CONSTRAINT "Shops_pkey",
-DROP COLUMN "id_shop",
+DROP
+COLUMN "id_shop",
 ADD COLUMN     "id_shop" INTEGER NOT NULL,
 ADD CONSTRAINT "Shops_pkey" PRIMARY KEY ("id_shop");
 
 -- AddForeignKey
-ALTER TABLE "Products" ADD CONSTRAINT "Products_id_shop_fkey" FOREIGN KEY ("id_shop") REFERENCES "Shops"("id_shop") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Products"
+    ADD CONSTRAINT "Products_id_shop_fkey" FOREIGN KEY ("id_shop") REFERENCES "Shops" ("id_shop") ON DELETE RESTRICT ON UPDATE CASCADE;

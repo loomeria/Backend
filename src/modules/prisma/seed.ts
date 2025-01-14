@@ -18,6 +18,7 @@ async function main() {
   });
   console.log('User created:', user);
 }
+
 main()
   .catch((e) => {
     console.error(e);

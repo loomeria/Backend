@@ -5,4 +5,4 @@
 
 */
 -- CreateIndex
-CREATE UNIQUE INDEX "Users_id_user_key" ON "Users"("id_user");
+CREATE UNIQUE INDEX "Users_id_user_key" ON "Users" ("id_user");

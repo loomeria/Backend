@@ -30,7 +30,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const authService = await this.moduleRef.resolve(AuthService, contextId);
     const user = await authService.validateUser(username, password);
 
-    if(password === ''){
+    if (password === '') {
       throw new UnauthorizedException('Please provide the password');
     }
 
