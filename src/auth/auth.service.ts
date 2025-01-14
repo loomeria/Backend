@@ -68,13 +68,13 @@ export class AuthService {
 
     if(UserCreateDto.safeParse(user).success === false){
 
+
     }
     else{
+
+      console.log("mail : " + user.mail);
       const userReturn = await this.usersService.findByEmail(user.mail);
       if(userReturn) return userReturn;
-
-      console.log("validateGoogleUser : " + user)
-      console.log(user.username)
 
       return await this.usersService.createUser({data : user});
     }
