@@ -26,17 +26,10 @@ export class AuthService {
     }
 
     if (pass != undefined) {
-      console.log('Password ' + user.password);
-      console.log('Pass ' + pass);
-
-      console.log('PASSAGE in if');
-
       if (!(await bcrypt.compare(pass, user.password))) {
         throw new UnauthorizedException();
       }
     }
-
-    console.log('PASSAGE Sign1');
     const payload = { sub: user.id_user, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),

@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Permissions, Users } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import {not} from "rxjs/internal/util/not";
 
 export const SaltOrRounds = 10;
 
@@ -32,19 +33,6 @@ export class UsersService {
       return error;
     }
   }
-
-  // async createUser({ data }: { data: Users }): Promise<Users> {
-  //
-  //   console.log("PERMISSIONS : " + data.id_permission);
-  //
-  //   if(data.password !== null){
-  //     data.password = await bcrypt.hash(data.password, SaltOrRounds);
-  //   }
-  //
-  //   return this.prisma.users.create({
-  //     data
-  //   });
-  // }
 
   async createUser({ data }: { data: Users }): Promise<Users> {
     console.log('PERMISSIONS : ' + data.id_permission);
@@ -125,6 +113,7 @@ export class UsersService {
     const user = await this.prisma.users.findFirst({
       where: {
         username: username,
+        deleted_at: null
       },
     });
     return !!user;

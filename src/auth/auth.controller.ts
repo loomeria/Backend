@@ -39,7 +39,7 @@ export class AuthController {
         const user = await this.usersService.findOne(signInDto.username);
         console.log(user);
 
-        if (!user) {
+        if (!user || user.deleted_at) {
           throw new UnauthorizedException();
         }
       }
@@ -65,7 +65,6 @@ export class AuthController {
         throw error;
       }
 
-      // Otherwise, wrap the error in an INTERNAL_SERVER_ERROR
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -110,7 +109,7 @@ export class AuthController {
         const user = await this.usersService.findOne(signInDto.username);
         console.log(user);
 
-        if (!user) {
+        if (!user || user.deleted_at) {
           throw new UnauthorizedException();
         }
       }

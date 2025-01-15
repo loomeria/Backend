@@ -51,6 +51,7 @@ export class UsersController {
           HttpStatus.BAD_REQUEST,
         );
       }
+
       if (await this.usersService.usernameAlreadyExists(user.username)) {
         throw new HttpException(
           {
