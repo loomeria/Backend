@@ -25,9 +25,11 @@ node {
 
   stage('SonarQube Analysis') {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-      def scannerHome = tool 'SonarScanner'
-      withSonarQubeEnv() {
-        sh "${scannerHome}/bin/sonar-scanner"
+      nodejs('NodeJS') {
+        def scannerHome = tool 'SonarScanner'
+        withSonarQubeEnv() {
+          sh "${scannerHome}/bin/sonar-scanner"
+        }
       }
     }
   }
