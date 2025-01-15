@@ -2,8 +2,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../modules/users/users.service';
-import {UserCreateDto} from "../modules/users/dto/create-users.dto";
-import {Users} from "@prisma/client";
+import { UserCreateDto } from '../modules/users/dto/create-users.dto';
+import { Users } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -18,26 +18,25 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.usersService.findOne(username);
 
-    if(username == "Test" && pass == "Test") {
-      const payload = { sub: 0, username: "test" };
+    if (username == 'Test' && pass == 'Test') {
+      const payload = { sub: 0, username: 'test' };
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
     }
 
+    if (pass != undefined) {
+      console.log('Password ' + user.password);
+      console.log('Pass ' + pass);
 
-    if(pass != undefined){
-      console.log("Password " +user.password);
-      console.log("Pass " +pass);
-
-      console.log("PASSAGE in if");
+      console.log('PASSAGE in if');
 
       if (!(await bcrypt.compare(pass, user.password))) {
         throw new UnauthorizedException();
       }
     }
 
-    console.log("PASSAGE Sign1");
+    console.log('PASSAGE Sign1');
     const payload = { sub: user.id_user, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -62,22 +61,18 @@ export class AuthService {
     };
   }
 
-  async validateGoogleUser(user: Users  ): Promise<Users> {
+  async validateGoogleUser(user: Users): Promise<Users> {
+    console.log('Type of ' + typeof user);
 
-    console.log("Type of " + typeof user);
-
-    if(UserCreateDto.safeParse(user).success === false){
-
-
-    }
-    else{
-
-      console.log("mail : " + user.mail);
+    if (UserCreateDto.safeParse(user).success === false) {
+    } else {
       const userReturn = await this.usersService.findByEmail(user.mail);
-      if(userReturn) return userReturn;
+      if (userReturn) return userReturn;
 
-      return await this.usersService.createUser({data : user});
+      console.log('validateGoogleUser : ' + user);
+      console.log(user.username);
+
+      return await this.usersService.createUser({ data: user });
     }
-
   }
 }
