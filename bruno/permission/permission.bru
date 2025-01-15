@@ -1,0 +1,18 @@
+meta {
+  name: permission
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/permissions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name" : "root",
+    "id_permission" : 1
+  }
+}

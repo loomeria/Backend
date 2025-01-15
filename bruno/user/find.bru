@@ -1,0 +1,19 @@
+meta {
+  name: find
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/users/5
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should be able to login", function() {
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+}
