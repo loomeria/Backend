@@ -34,7 +34,6 @@ export class AuthController {
   @Post('login')
   async signIn(@Body() signInDto: Record<string, any>, @Res() res: Response) {
     try {
-      //verify if the user exists
 
       if (signInDto.username != 'Test' && signInDto.password != 'Test') {
         const user = await this.usersService.findOne(signInDto.username);
@@ -50,17 +49,17 @@ export class AuthController {
         signInDto.password,
       );
 
-      console.log(token);
+      //console.log("token : " + token);
       // Set the token in the response header
-      res.cookie('access_token', token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'none',
-        maxAge: 3600000,
-      });
+      // res.cookie('access_token', token, {
+      //   httpOnly: true,
+      //   secure: false,
+      //   sameSite: 'none',
+      //   maxAge: 3600000,
+      // });
 
-      // Optionally send a response body or just end the response
-      return res.status(200).send({ message: 'Login successful' });
+      return res.status(200).send(token);
+
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -74,6 +73,7 @@ export class AuthController {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+
     }
   }
 
