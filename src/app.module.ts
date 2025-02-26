@@ -13,6 +13,7 @@ import { AddressModule } from './modules/address/address.module';
 import { SellersModule } from './modules/sellers/sellers.module';
 import { ShopsModule } from './modules/shops/shops.module';
 import { ProductsModule } from './modules/products/products.module';
+import { ChatsModule } from './modules/chats/chats.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProductsModule } from './modules/products/products.module';
     SellersModule,
     ShopsModule,
     ProductsModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, PrismaService, UsersService],

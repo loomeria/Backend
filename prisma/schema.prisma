@@ -14,13 +14,12 @@ generator client {
 }
 
 model Baskets {
-  id_basket  Int                 @id
+  id_basket  Int                 @id @default(autoincrement())
   created_at DateTime            @default(now())
   updated_at DateTime?
   deleted_at DateTime?
   products   BasketsHasProduct[]
-
-  Customers Customers[]
+  Customers  Customers[]
 }
 
 model Permissions {
@@ -33,14 +32,14 @@ model Permissions {
 }
 
 model Collections {
-  id_collection Int        @id
+  id_collection Int        @id @default(autoincrement())
   name          String     @db.VarChar(50)
   description   String?    @db.VarChar(50)
   products      Products[]
 }
 
 model Discounts {
-  id_discount Int        @id
+  id_discount Int        @id @default(autoincrement())
   name        String     @db.VarChar(50)
   description String?    @db.VarChar(50)
   active      Boolean
@@ -52,14 +51,14 @@ model Discounts {
 }
 
 model Status {
-  id_state        Int               @id
+  id_state        Int               @id @default(autoincrement())
   name            String?           @db.VarChar(50)
   description     String?           @db.VarChar(50)
   ordersHasStatus OrdersHasStatus[]
 }
 
 model Categories {
-  id_categories Int            @id
+  id_categories Int            @id @default(autoincrement())
   internal_id   Decimal        @db.Decimal(2, 1)
   name          String         @db.VarChar(50)
   products      Products[]
@@ -89,7 +88,7 @@ model Users {
 }
 
 model Preferencies {
-  id_preference Int         @id
+  id_preference Int         @id @default(autoincrement())
   last_update   DateTime?
   id_categories Int
   categories    Categories  @relation(fields: [id_categories], references: [id_categories])
@@ -97,7 +96,7 @@ model Preferencies {
 }
 
 model Customers {
-  id_user       Int          @id
+  id_user       Int          @id @default(autoincrement())
   id_preference Int
   id_basket     Int
   user          Users        @relation(fields: [id_user], references: [id_user])
@@ -110,7 +109,7 @@ model Customers {
 }
 
 model Sellers {
-  id_seller Int     @id
+  id_seller Int     @id @default(autoincrement())
   siret     String  @db.VarChar(14)
   iban      String? @db.VarChar(34)
   id_user   Int     @unique
@@ -120,7 +119,7 @@ model Sellers {
 }
 
 model Address {
-  id_address Int       @id
+  id_address Int       @id @default(autoincrement())
   address    String    @db.VarChar(50)
   address2   String?   @db.VarChar(50)
   city       String    @db.VarChar(50)
@@ -135,7 +134,7 @@ model Address {
 }
 
 model Orders {
-  id_order         Int                 @id
+  id_order         Int                 @id @default(autoincrement())
   created_at       DateTime            @default(now())
   shipping         Json
   provider         String              @db.VarChar(50)
@@ -146,7 +145,7 @@ model Orders {
 }
 
 model Shops {
-  id_shop     Int        @id
+  id_shop     Int        @id @default(autoincrement())
   name        String     @db.VarChar(50)
   description String     @db.VarChar(1000)
   address     String?    @db.VarChar(100)
@@ -156,30 +155,28 @@ model Shops {
 }
 
 model Wishlists {
-  id_wishlist         String                  @id @db.VarChar(50)
+  id_wishlist         Int                    @id @default(autoincrement())
   name                Int
-  created_at          DateTime                @default(now())
+  created_at          DateTime               @default(now())
   updated_at          DateTime?
   deleted_at          DateTime?
   id_user             Int
-  user                Customers               @relation(fields: [id_user], references: [id_user])
-  wishlistHasProducts WhishlistsHasProducts[]
+  user                Customers              @relation(fields: [id_user], references: [id_user])
+  wishlistHasProducts WishlistsHasProducts[]
 }
 
 model Chats {
-  id_chat   String     @id @db.VarChar(100)
-  message   String     @db.VarChar(50)
+  id_chat   Int        @id @default(autoincrement())
   id_user   Int
   id_seller Int
   user      Customers  @relation(fields: [id_user], references: [id_user])
   seller    Sellers    @relation(fields: [id_seller], references: [id_seller])
   messages  Messages[]
-
-  Users Users[]
+  Users     Users[]
 }
 
 model Products {
-  id_product        Int                 @id
+  id_product        Int                 @id @default(autoincrement())
   title             String              @db.VarChar(50)
   description       String?             @db.VarChar(1000)
   price             Decimal             @db.Decimal(6, 2)
@@ -202,11 +199,11 @@ model Products {
 
   BasketsHasProduct BasketsHasProduct[]
 
-  WhishlistsHasProducts WhishlistsHasProducts[]
+  WishlistsHasProducts WishlistsHasProducts[]
 }
 
 model Histories {
-  id_history String    @id @db.VarChar(50)
+  id_history Int       @id @default(autoincrement())
   product_id Int
   created_at DateTime  @default(now())
   is_read    DateTime
@@ -217,14 +214,14 @@ model Histories {
 }
 
 model Pictures {
-  id_picture String   @id @db.VarChar(50)
-  url        String?  @db.VarChar(100)
+  id_picture Int      @id @default(autoincrement())
+  url        String?  @db.VarChar(1000)
   id_product Int
   product    Products @relation(fields: [id_product], references: [id_product])
 }
 
 model Reviews {
-  id_review  Int      @id
+  id_review  Int      @id @default(autoincrement())
   stars      Decimal  @db.Decimal(1, 0)
   quote      String?  @db.VarChar(50)
   id_product Int
@@ -232,18 +229,18 @@ model Reviews {
 }
 
 model Messages {
-  id_message  Int           @id
+  id_message  Int           @id @default(autoincrement())
   is_seller   Boolean
   is_read     DateTime?
   message     String        @db.VarChar(50)
-  id_chat     String        @db.VarChar(100)
+  id_chat     Int
   chat        Chats         @relation(fields: [id_chat], references: [id_chat])
   attachments Attachments[]
 }
 
 model Attachments {
-  id_attachment Int      @id
-  url           String   @db.VarChar(100)
+  id_attachment Int      @id @default(autoincrement())
+  url           String   @db.VarChar(1000)
   id_message    Int
   message       Messages @relation(fields: [id_message], references: [id_message])
 }
@@ -275,8 +272,8 @@ model OrdersHasStatus {
   @@id([id_order, id_state])
 }
 
-model WhishlistsHasProducts {
-  id_wishlist String
+model WishlistsHasProducts {
+  id_wishlist Int
   id_product  Int
   wishlist    Wishlists @relation(fields: [id_wishlist], references: [id_wishlist])
   product     Products  @relation(fields: [id_product], references: [id_product])
